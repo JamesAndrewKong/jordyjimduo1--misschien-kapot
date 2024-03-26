@@ -29,14 +29,14 @@ services:
 
   myapi:
     build:
-      context: .
+      context: /api
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
       - MONGO_URL=${MONGO_URL}/${DB_NAME}
     volumes:
-      - .:/app
+      - ./api:/app
     networks:
       - week4network
     container_name: myapi
