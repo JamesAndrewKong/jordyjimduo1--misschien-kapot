@@ -42,6 +42,18 @@ services:
     container_name: myapi
     depends_on:
       - mydatabase
+      
+  frontend:
+    build:
+      context: /frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      - API_URL=${API_URL}
+    networks:
+      - week4network
+    container_name: frontend
 
 # Define named volumes
 volumes:
