@@ -1,6 +1,20 @@
 version: '3.8'
 
 services:
+  messagebus:
+    image: rabbitmq:latest
+    container_name: messagebus
+    hostname: "messagebus"
+    labels:
+        NAME: "messagebus"
+    ports:
+    - "4369:4369"
+    - "5671:5671"
+    - "5672:5672"
+    - "25672:25672"
+    - "15671:15671"
+    - "15672:15672"
+    
   mydatabase:
     image: mongo:latest
     container_name: mydatabase
@@ -12,22 +26,36 @@ services:
       - mongo_data:/data/db
     networks:
       - week4network
+    ports:
+      - "27017:27017"
 
   myapi:
     build:
-      context: .
+      context: /api
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
       - MONGO_URL=${MONGO_URL}/${DB_NAME}
     volumes:
-      - .:/app
+      - ./api:/app
     networks:
       - week4network
     container_name: myapi
     depends_on:
       - mydatabase
+      
+  frontend:
+    build:
+      context: /frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      - API_URL=${API_URL}
+    networks:
+      - week4network
+    container_name: frontend
 
 # Define named volumes
 volumes:
