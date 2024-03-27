@@ -2,11 +2,6 @@ kind: Environment
 name: preview
 type: primary
 urlHandle: 12sfsf23
-environmentVariables:
-    DB_NAME: mydb
-    MONGO_PASSWORD: week4password
-    MONGO_URL: 'mongodb://mydatabase:27017'
-    MONGO_USERNAME: week4username
 components:
     -
         kind: Application
