@@ -23,12 +23,17 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: ./api
 
-      - name: Run Tests and Generate Coverage
-        run: npm test -- --rootDir=api
+      - name: Run Tests
+        run: npm test
+        working-directory: ./api
 
       - name: Run ESLint
         run: npm run lint
+        working-directory: ./api
 
       - name: Jest coverage report
         uses: ArtiomTr/jest-coverage-report-action@v2.3.0
+        with:
+          working-directory: ./api 
