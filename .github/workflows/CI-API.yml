@@ -33,5 +33,7 @@ jobs:
         run: npm run lint
         working-directory: ./api
 
-      - name: Jest coverage report
-        uses: ArtiomTr/jest-coverage-report-action@v2.3.0
+      - name: Jest Annotations & Coverage
+        uses: mattallty/jest-github-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
