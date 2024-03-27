@@ -32,8 +32,3 @@ jobs:
       - name: Run ESLint
         run: npm run lint
         working-directory: ./api
-
-      - name: Jest coverage report
-        uses: ArtiomTr/jest-coverage-report-action@v2.3.0
-        with:
-          files: './coverage/lcov.info'
