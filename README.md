@@ -7,5 +7,4 @@
 [![Bunnyshell - Deploy Preview Environment](https://github.com/JamesAndrewKong/jordyjimduo1/actions/workflows/bunnyshell_deploy-preview-env.yaml/badge.svg?branch=main)](https://github.com/JamesAndrewKong/jordyjimduo1/actions/workflows/bunnyshell_deploy-preview-env.yaml)
 
 COMMAND TO RUN FOR DOCKER COMPOSE [NEW]
-
 docker-compose --env-file ./api/.env up
