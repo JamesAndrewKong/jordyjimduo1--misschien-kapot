@@ -1,7 +1,7 @@
 kind: Environment
 name: preview
 type: primary
-urlHandle: previewjordyjim
+urlHandle: jjpreview
 environmentVariables:
     DB_NAME: mydb
     MONGO_PASSWORD: week4password
