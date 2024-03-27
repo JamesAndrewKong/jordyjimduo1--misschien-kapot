@@ -1,7 +1,7 @@
 kind: Environment
 name: preview
 type: primary
-urlHandle: jjpreview
+urlHandle: 12sfsf23
 environmentVariables:
     DB_NAME: mydb
     MONGO_PASSWORD: week4password
@@ -12,7 +12,7 @@ components:
         kind: Application
         name: frontend
         gitRepo: 'https://github.com/JamesAndrewKong/jordyjimduo1.git'
-        gitBranch: main
+        gitBranch: W5.2
         gitApplicationPath: /frontend
         dockerCompose:
             build:
@@ -51,7 +51,7 @@ components:
         kind: Application
         name: myapi
         gitRepo: 'https://github.com/JamesAndrewKong/jordyjimduo1.git'
-        gitBranch: main
+        gitBranch: W5.2
         gitApplicationPath: /api
         dockerCompose:
             build:
