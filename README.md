@@ -4,6 +4,7 @@
 
 [![Node.js CI](https://github.com/avans-devops/avans-devops-2324-jordyjim/actions/workflows/node.js.yml/badge.svg)](https://github.com/avans-devops/avans-devops-2324-jordyjim/actions/workflows/node.js.yml)
 
+[![Bunnyshell - Deploy Preview Environment](https://github.com/JamesAndrewKong/jordyjimduo1/actions/workflows/bunnyshell_deploy-preview-env.yaml/badge.svg?branch=main)](https://github.com/JamesAndrewKong/jordyjimduo1/actions/workflows/bunnyshell_deploy-preview-env.yaml)
 
 COMMAND TO RUN FOR DOCKER COMPOSE [NEW]
 
