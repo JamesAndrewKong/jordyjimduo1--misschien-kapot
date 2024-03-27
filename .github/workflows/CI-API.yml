@@ -16,13 +16,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Navigate to API directory
-        run: cd api
-
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+
+      - name: Navigate to parent directory
+        run: cd ..
+
+      - name: Navigate to api directory
+        run: cd api
 
       - name: Install dependencies
         run: npm install
