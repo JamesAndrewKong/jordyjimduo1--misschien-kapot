@@ -1,0 +1,86 @@
+kind: Environment
+name: preview
+type: primary
+urlHandle: 12sfsf23
+environmentVariables:
+    DB_NAME: mydb
+    MONGO_PASSWORD: week4password
+    MONGO_URL: 'mongodb://mydatabase:27017'
+    MONGO_USERNAME: week4username
+components:
+    -
+        kind: Application
+        name: frontend
+        gitRepo: 'https://github.com/JamesAndrewKong/jordyjimduo1.git'
+        gitBranch: W5.2
+        gitApplicationPath: /frontend
+        dockerCompose:
+            build:
+                context: ./frontend
+                dockerfile: Dockerfile
+            environment:
+                API_URL: ''
+            ports:
+                - '80:80'
+        hosts:
+            -
+                hostname: 'frontend-{{ env.base_domain }}'
+                path: /
+                servicePort: 80
+    -
+        kind: Service
+        name: messagebus
+        dockerCompose:
+            hostname: messagebus
+            image: 'rabbitmq:latest'
+            labels:
+                NAME: messagebus
+            ports:
+                - '4369:4369'
+                - '5671:5671'
+                - '5672:5672'
+                - '25672:25672'
+                - '15671:15671'
+                - '15672:15672'
+        hosts:
+            -
+                hostname: 'messagebus-{{ env.base_domain }}'
+                path: /
+                servicePort: 4369
+    -
+        kind: Application
+        name: myapi
+        gitRepo: 'https://github.com/JamesAndrewKong/jordyjimduo1.git'
+        gitBranch: W5.2
+        gitApplicationPath: /api
+        dockerCompose:
+            build:
+                context: ./api
+                dockerfile: Dockerfile
+            environment:
+                MONGO_URL: 'mongodb://mydatabase:27017'
+            ports:
+                - '3000:3000'
+        hosts:
+            -
+                hostname: 'myapi-{{ env.base_domain }}'
+                path: /
+                servicePort: 3000
+    -
+        kind: Database
+        name: mydatabase
+        dockerCompose:
+            image: 'mongo:latest'
+            ports:
+                - '27017:27017'
+            restart: always
+        volumes:
+            -
+                name: mongo-data
+                mount: /data/db
+                subPath: ''
+volumes:
+    -
+        name: mongo-data
+        size: 1Gi
+        type: disk
