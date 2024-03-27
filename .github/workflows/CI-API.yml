@@ -36,4 +36,4 @@ jobs:
       - name: Jest coverage report
         uses: ArtiomTr/jest-coverage-report-action@v2.3.0
         with:
-          coverage-file: './api/coverage/lcov.info'
+          files: './api/coverage/lcov.info'
