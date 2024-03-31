@@ -8,7 +8,7 @@ const logger = require('morgan');
 const createError = require('http-errors');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const metricsRouter = require('./routes/metrics'); // Import the metrics router
+const metricsRouter = require('./routes/metrics');
 
 const app = express();
 
