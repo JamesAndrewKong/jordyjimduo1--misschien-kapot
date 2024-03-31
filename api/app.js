@@ -42,7 +42,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Mount route handlers
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/metrics', metricsRouter); // Mount the metrics router at the '/metrics' path
+app.use('/metrics2', metricsRouter);
 
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {
