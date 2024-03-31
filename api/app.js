@@ -10,6 +10,7 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const metricsRouter = require('./routes/metrics');
 
+
 const app = express();
 
 // Prometheus Metrics Setup
