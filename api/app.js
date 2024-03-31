@@ -8,6 +8,7 @@ const logger = require('morgan');
 const createError = require('http-errors');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const metricsRouter = require('./routes/metrics'); // Import the metrics router
 
 const app = express();
 
@@ -37,8 +38,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Mount route handlers
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/metrics', metricsRouter); // Mount the metrics router at the '/metrics' path
 
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {
