@@ -1,14 +1,14 @@
 kind: Environment
-name: preview
+name: pleasework
 type: primary
-urlHandle: 12sfsf23
+urlHandle: vwwyup
 components:
     -
         kind: Application
         name: frontend
         gitRepo: 'https://github.com/JamesAndrewKong/jordyjimduo1.git'
         gitBranch: main
-        gitApplicationPath: /frontend
+        gitApplicationPath: frontend
         dockerCompose:
             build:
                 context: ./frontend
@@ -43,11 +43,20 @@ components:
                 path: /
                 servicePort: 4369
     -
+        kind: Database
+        name: mongodb-exporter
+        dockerCompose:
+            environment:
+                MONGODB_URI: 'mongodb://mydatabase:27017'
+            image: 'bitnami/mongodb-exporter:latest'
+            ports:
+                - '9216:9216'
+    -
         kind: Application
         name: myapi
         gitRepo: 'https://github.com/JamesAndrewKong/jordyjimduo1.git'
         gitBranch: main
-        gitApplicationPath: /api
+        gitApplicationPath: api
         dockerCompose:
             build:
                 context: ./api
@@ -74,6 +83,23 @@ components:
                 name: mongo-data
                 mount: /data/db
                 subPath: ''
+    -
+        kind: Application
+        name: prometheus
+        gitRepo: 'https://github.com/JamesAndrewKong/jordyjimduo1.git'
+        gitBranch: main
+        gitApplicationPath: prometheus
+        dockerCompose:
+            build:
+                context: ./prometheus
+                dockerfile: Dockerfile
+            ports:
+                - '9090:9090'
+        hosts:
+            -
+                hostname: 'prometheus-{{ env.base_domain }}'
+                path: /
+                servicePort: 9090
 volumes:
     -
         name: mongo-data
