@@ -31,7 +31,7 @@ services:
 
   myapi:
     build:
-      context: /api
+      context: ./api
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
@@ -47,7 +47,7 @@ services:
       
   frontend:
     build:
-      context: /frontend
+      context: ./frontend
       dockerfile: Dockerfile
     ports:
       - "80:80"
@@ -56,6 +56,29 @@ services:
     networks:
       - week4network
     container_name: frontend
+    
+  prometheus:
+    build:
+      context: ./prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    container_name: prometheus
+    networks:
+      - week4network
+
+  mongodb-exporter:
+    image: bitnami/mongodb-exporter:latest
+    ports:
+      - "9216:9216"
+    environment:
+      - MONGODB_URI=mongodb://mydatabase:27017
+    networks:
+      - week4network
+    container_name: mongodb-exporter
+    depends_on:
+      - mydatabase
 
 # Define named volumes
 volumes:
