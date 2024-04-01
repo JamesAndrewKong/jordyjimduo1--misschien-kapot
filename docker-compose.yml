@@ -57,21 +57,34 @@ services:
       - week4network
     container_name: frontend
     
+  # prometheus:
+  #   build:
+  #     context: ./prometheus
+  #   volumes:
+  #     - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+  #     - prometheus-data:/prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   container_name: prometheus
+  #   networks:
+  #     - week4network
+
   prometheus:
-    build:
-      context: ./prometheus
+    image: prom/prometheus:latest
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
     ports:
-      - "9090:9090"
+    - "9090:9090"
     container_name: prometheus
-    networks:
-      - week4network
+    command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
 
   grafana:
-    build: ./grafana
+    build: 
+      context: ./grafana
     ports:
-    - 5000:5000
+      - "5000:5000"
+    container_name: grafana
 
   mongodb-exporter:
     image: bitnami/mongodb-exporter:latest
@@ -88,6 +101,7 @@ services:
 # Define named volumes
 volumes:
   mongo_data:
+  prometheus-data:
 
 # Define custom network
 networks:

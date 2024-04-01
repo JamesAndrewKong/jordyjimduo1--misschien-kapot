@@ -1,5 +1,5 @@
 datasources:
-  - name: 'DS_PROMETHEUS'
+  - name: 'Prometheus'
     type: 'prometheus'
     access: 'proxy'
     org_id: 1
