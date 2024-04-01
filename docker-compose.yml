@@ -68,6 +68,11 @@ services:
     networks:
       - week4network
 
+  grafana:
+    build: ./grafana
+    ports:
+    - 5000:5000
+
   mongodb-exporter:
     image: bitnami/mongodb-exporter:latest
     ports:
