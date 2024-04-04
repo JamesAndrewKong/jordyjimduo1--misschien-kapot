@@ -4,26 +4,20 @@ services:
   messagebus:
     image: rabbitmq:latest
     container_name: messagebus
-    hostname: "messagebus"
-    labels:
-        NAME: "messagebus"
     ports:
-    - "4369:4369"
-    - "5671:5671"
-    - "5672:5672"
-    - "25672:25672"
-    - "15671:15671"
-    - "15672:15672"
+      - '${BROKER_HTTP_PORT:-15672}:15672'
+    restart: unless-stopped
     
   mydatabase:
     image: mongo:latest
     container_name: mydatabase
     restart: always
-    # environment:
-    #   MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
-    #   MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME:-week4username}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD:-week4password}
     volumes:
       - mongo_data:/data/db
+      # - ./data/db:/data/db
     networks:
       - week4network
     ports:
@@ -34,9 +28,11 @@ services:
       context: ./api
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - '${APP_PORT:-8000}:3000'
     environment:
-      - MONGO_URL=${MONGO_URL}/${DB_NAME}
+      # MONGO_URL: ${MONGO_URL}/${DB_NAME}
+      JWT_SECRET: '${JWT_SECRET}'
+      USER_SERVICE_URL: 'http://user-service:${USER_SERVICE_PORT:-3000}'
     volumes:
       - ./api:/app
     networks:
@@ -44,18 +40,38 @@ services:
     container_name: myapi
     depends_on:
       - mydatabase
-      
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    environment:
-      - API_URL=${API_URL}
+      - user-service
+
+  user-service:
+    image: node:20.11.1
+    container_name: 'service-user'
+    working_dir: /var/www/html
+    volumes:
+      - ./Services/UserService:/var/www/html
     networks:
       - week4network
-    container_name: frontend
+    environment:
+      APP_PORT: '${USER_SERVICE_PORT:-3000}'
+      DB_URL: 'mongodb://mydatabase:27017/users'
+      DB_USERNAME: '${DB_USERNAME:-week4username}'
+      DB_PASSWORD: '${DB_PASSWORD:-week4password}'
+    command: bash -c "npm install && npm run watch"
+    # restart: unless-stopped
+    depends_on:
+      - messagebus
+      - mydatabase
+      
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "80:80"
+  #   environment:
+  #     - API_URL=${API_URL}
+  #   networks:
+  #     - week4network
+  #   container_name: frontend
     
   prometheus:
     build:
@@ -73,7 +89,7 @@ services:
     ports:
       - "9216:9216"
     environment:
-      - MONGODB_URI=mongodb://mydatabase:27017
+      MONGODB_URI: 'mongodb://${DB_USERNAME:-week4username}:${DB_PASSWORD:-week4password}@mydatabase:27017'
     networks:
       - week4network
     container_name: mongodb-exporter

@@ -1,12 +1,12 @@
-const { MongoClient } = require("mongodb");
+// const { MongoClient } = require("mongodb");
 
-const client = new MongoClient(process.env.MONGO_URL);
+// const client = new MongoClient(process.env.MONGO_URL);
 
-const db = client.db(process.env.DB_NAME);
+// const db = client.db(process.env.DB_NAME);
 
-module.exports = {
+// module.exports = {
 
-    db: db,
-    client: client
+//     db: db,
+//     client: client
 
-};
+// };
