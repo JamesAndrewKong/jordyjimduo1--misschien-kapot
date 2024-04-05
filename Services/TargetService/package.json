@@ -1,0 +1,35 @@
+{
+  "name": "targetservice",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node index.js",
+    "watch": "nodemon index.js",
+    "test": "export NODE_ENV=test && jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "express-async-handler": "^1.2.0",
+    "express-prom-bundle": "^7.0.0",
+    "express-validator": "^7.0.1",
+    "http-errors": "~1.6.3",
+    "joi": "^17.12.3",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.3.1",
+    "mongoose": "^6.2.8",
+    "morgan": "~1.9.1",
+    "prom-client": "^15.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.8.0",
+    "jest": "^27.4.7",
+    "mongodb-memory-server": "^8.4.2",
+    "nodemon": "^2.0.15",
+    "supertest": "^6.3.4"
+  }
+}
