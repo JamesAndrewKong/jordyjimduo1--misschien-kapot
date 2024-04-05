@@ -4,6 +4,7 @@ const prometheus = require('prom-client');
 
 const indexRouter = require('./routes/index');
 const metricsRouter = require('./routes/metrics');
+const photosRouter = require('./routes/photos');
 
 const createError = require('http-errors');
 const express = require('express');
@@ -63,6 +64,8 @@ app.use('/', indexRouter);
 app.use('/auth', require('./routes/auth'));
 app.use('/users', require('./routes/users'));
 app.use('/metrics', metricsRouter); // Mount the metrics router at the '/metrics' path
+app.use('/uploads', express.static('uploads'));  // serve the 'uploads' directory as static files
+app.use('/photos', photosRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
