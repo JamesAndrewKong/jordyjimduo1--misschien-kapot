@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-const prometheus = require('prom-client');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -9,25 +8,18 @@ const createError = require('http-errors');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const metricsRouter = require('./routes/metrics');
+const promBundle = require('express-prom-bundle');
 
+const metricsMiddleware = promBundle({
+  includePath: true,
+  includeStatusCode: true,
+  normalizePath: true,
+  promClient: {
+      collectDefaultMetrics: {},
+  },
+});
 
 const app = express();
-
-// Prometheus Metrics Setup
-const registry = new prometheus.Registry();
-prometheus.collectDefaultMetrics({ register: registry });
-const httpRequestCounter = new prometheus.Counter({
-  name: 'http_requests_total',
-  help: 'Total number of HTTP requests',
-  labelNames: ['method', 'status'],
-  registers: [registry],
-});
-
-// Middleware for Prometheus Metrics
-app.use((req, res, next) => {
-  httpRequestCounter.labels(req.method, res.statusCode).inc();
-  next();
-});
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -38,6 +30,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(metricsMiddleware);
 
 // Mount route handlers
 app.use('/', indexRouter);
