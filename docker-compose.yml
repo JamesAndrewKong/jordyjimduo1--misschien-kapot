@@ -57,6 +57,7 @@ services:
   #     - week4network
   #   container_name: frontend
   
+  # Monitoring services
   grafana:
     build: ./Services/Grafana
     container_name: grafana
@@ -84,6 +85,16 @@ services:
       - myapi
       - mongodb-exporter
 
+  alert-manager:
+    container_name: service-alert
+    image: quay.io/prometheus/alertmanager
+    restart: unless-stopped
+    volumes:
+      - ./Services/AlertService:/etc/prometheus
+    command: --config.file=/etc/prometheus/alertmanager.yml
+    networks:
+      - week4network
+
   mongodb-exporter:
     image: bitnami/mongodb-exporter:latest
     ports:
@@ -95,6 +106,16 @@ services:
     container_name: mongodb-exporter
     depends_on:
       - mydatabase
+
+  # Mail service
+  mailhog:
+    container_name: service-mail
+    image: mailhog/mailhog:latest
+    restart: unless-stopped
+    ports:
+      - '${MAILHOG_PORT:-8004}:8025'
+    networks:
+      - week4network
 
 # Define named volumes
 volumes:

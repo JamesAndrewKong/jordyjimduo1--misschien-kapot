@@ -15,3 +15,8 @@ scrape_configs:
     static_configs:
       - targets: ['mongodb-exporter:9216']
 
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alert-manager:9093

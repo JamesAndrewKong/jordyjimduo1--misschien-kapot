@@ -2,5 +2,5 @@ groups:
   - name: ApiAlerts
     rules:
       - alert: 'On api down'
-        expr: up{job='api'} < 1
+        expr: up{job='myapi'} < 1
         for: 30s
