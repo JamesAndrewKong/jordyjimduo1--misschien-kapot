@@ -1,5 +1,6 @@
 const express = require('express');
 const User = require('./models/user');
+const http = require('http');
 const paginate = require('./helpers/paginatedResponse');
 const validId = require('./helpers/validId');
 const logger = require('morgan');
@@ -56,5 +57,14 @@ app.use(function(err, req, res) {
     res.status(err.status || 500);
     res.render('error');
   });
+
+  if (process.env.NODE_ENV !== 'test') {
+    app.set('port', process.env.APP_PORT || 3000);
+
+    const server = http.createServer(app);
+    const port = process.env.APP_PORT || 3000;
+
+    server.listen(port, () => console.log(`Listening on port ${port}`));
+}
 
 module.exports = app;
