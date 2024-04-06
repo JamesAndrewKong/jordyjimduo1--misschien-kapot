@@ -23,6 +23,31 @@ class ImaggaService {
 
     return response.data.result.tags.map(tag => tag.tag.en);  // extract the English tag names
   }
+
+  async calculateScores(target) {
+    const targetTags = await this.getTags(target.photo);
+    const submissions = await Submission.find({ target: target.id });
+
+    let highestScore = 0;
+    let winner = null;
+
+    for (const submission of submissions) {
+      const submissionTags = await this.getTags(submission.photo);
+      const score = this.calculateSimilarity(targetTags, submissionTags);
+
+      if (score > highestScore) {
+        highestScore = score;
+        winner = submission;
+      }
+    }
+
+    return winner;
+  }
+
+  calculateSimilarity(tags1, tags2) {
+    const sharedTags = tags1.filter(tag => tags2.includes(tag));
+    return sharedTags.length;
+  }
 }
 
 module.exports = new ImaggaService(

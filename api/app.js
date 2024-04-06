@@ -1,10 +1,12 @@
 require('dotenv').config();
+require('./services/clockservice');
 
 const prometheus = require('prom-client');
 const emailRouter = require('./routes/email');
 const indexRouter = require('./routes/index');
 const metricsRouter = require('./routes/metrics');
 const photosRouter = require('./routes/photos');
+const targetsRouter = require('./routes/targets');
 
 const createError = require('http-errors');
 const express = require('express');
@@ -63,6 +65,7 @@ const jwtToken = passport.authenticate('jwt', { session: false });
 app.use('/', indexRouter);
 app.use('/auth', require('./routes/auth'));
 app.use('/users', require('./routes/users'));
+app.use('/targets', targetsRouter);
 app.use('/metrics', metricsRouter); // Mount the metrics router at the '/metrics' path
 app.use('/uploads', express.static('uploads'));  // serve the 'uploads' directory as static files
 app.use('/photos', photosRouter);
