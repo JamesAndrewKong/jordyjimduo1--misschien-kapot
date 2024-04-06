@@ -42,25 +42,12 @@ app.get('/targets/:id', (req, res, next) => {
         .catch(next);
 });
 
-// error handler
 app.use(function(err, req, res) {
-    // Set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
+    const message = err.message;
+    const error = req.app.get('env') === 'development' ? err : {};
   
-    // Render the error page
     res.status(err.status || 500);
-    res.render('error');
-  });
-
-  if (process.env.NODE_ENV !== 'test') {
-    app.set('port', process.env.APP_PORT || 3000);
-
-    const server = http.createServer(app);
-    const port = process.env.APP_PORT || 3000;
-/*...*/
-/*...*/
-    server.listen(port, () => console.log(`Listening on port ${port}`));
-}
+    res.send(message);
+});
 
 module.exports = app;

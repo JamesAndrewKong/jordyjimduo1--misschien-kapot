@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const addPagination = require('../helpers/paginationQuery');
 
 const TargetSchema = new mongoose.Schema({
   photo: String,
@@ -7,4 +8,8 @@ const TargetSchema = new mongoose.Schema({
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
-module.exports = mongoose.model('Target', TargetSchema);
+TargetSchema.query.byPage = addPagination;
+
+const Target = mongoose.model('Target', TargetSchema);
+
+module.exports = Target;

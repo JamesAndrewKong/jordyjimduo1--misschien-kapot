@@ -1,6 +1,9 @@
 const express = require('express');
 const multer = require('multer');
 const { body, validationResult } = require('express-validator');
+const Target = require('../models/target');
+const paginate = require('../helpers/paginatedResponse');
+const validId = require('../helpers/validId');
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
@@ -28,16 +31,20 @@ router.post('/',
     }
 });
 
-router.get('/', async (req, res) => {
-  try {
-    const targets = await Target.find().populate('owner');
-    res.send(targets);
-  } catch (err) {
-    res.status(500).send(err);
-  }
+router.get('/', async (req, res, next) => {
+  const result = Target.find().byPage(req.query.page, req.query.perPage);
+
+  const count = await Target.countDocuments();
+
+  result.then(data => res.json(paginate(data, count, req)))
+      .catch(next);
 });
 
 router.get('/:id', async (req, res) => {
+  if (!validId(req.params.id)) {
+    return res.status(400).send('Invalid ID');
+  }
+
   try {
     const target = await Target.findById(req.params.id).populate('owner');
     res.send(target);
