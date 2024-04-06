@@ -2,7 +2,6 @@ const express = require('express');
 const axios = require('axios');
 const { body, validationResult } = require('express-validator');
 const paginate = require('../helpers/paginatedResponse');
-const validId = require('../helpers/validId');
 const passport = require('passport');
 
 const router = express.Router();
@@ -56,10 +55,6 @@ router.get('/',
 router.get('/:id', 
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-  if (!validId(req.params.id)) {
-    return res.status(400).send('Invalid ID');
-  }
-
   try {
     const response = await axios.get(`http://targetservice/targets/${req.params.id}`);
     res.send(response.data);
