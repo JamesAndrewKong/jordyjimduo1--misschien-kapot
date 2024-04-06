@@ -53,4 +53,46 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+router.put('/:id', 
+  upload.single('photo'), 
+  body('deadline').isDate(),
+  body('owner').isString(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const target = await Target.findById(req.params.id);
+      if (!target) {
+        return res.status(404).send('Target not found');
+      }
+
+      target.photo = req.file.path;
+      target.deadline = req.body.deadline;
+      target.owner = req.body.owner;
+
+      await target.save();
+      res.send(target);
+    } catch (err) {
+      res.status(500).send(err);
+    }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const target = await Target.findById(req.params.id);
+    if (!target) {
+      return res.status(404).send('Target not found');
+    }
+
+    await target.remove();
+    res.send('Target deleted');
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+
 module.exports = router;
