@@ -3,13 +3,16 @@ const axios = require('axios');
 const { body, validationResult } = require('express-validator');
 const paginate = require('../helpers/paginatedResponse');
 const passport = require('passport');
+const multer = require('multer');
+const upload = multer();
 
 const router = express.Router();
 
 async function verifyOwner(req, res, next) {
   try {
-    const response = await axios.get(`${process.env.TARGET_SERVICE_URL}/targets/${req.params.id}`);
-    if (req.user.id !== response.data.owner.toString()) {
+    const targetResponse = await axios.get(`${process.env.TARGET_SERVICE_URL}/targets/${req.params.id}`);
+    const userResponse = await axios.get(`${process.env.USER_SERVICE_URL}/users/${targetResponse.data.owner}`);
+    if (req.user.id !== userResponse.data._id.toString()) {
       return res.status(403).send('You are not the owner of this target');
     }
     next();
@@ -19,9 +22,28 @@ async function verifyOwner(req, res, next) {
 }
 
 router.post('/', 
+  upload.single('photo'), // This will parse the 'photo' file and the text fields
   passport.authenticate('jwt', { session: false }),
-  body('deadline').isDate(),
-  body('owner').isString(),
+  body('deadline').custom((value) => {
+    const date = new Date(value);
+    if (isNaN(date.getTime())) {
+      throw new Error('Invalid date');
+    }
+    return true;
+  }),
+  body('owner').custom(async (value) => {
+    if (!value) {
+      throw new Error('Owner is required');
+    }
+    try {
+      const response = await axios.get(`${process.env.USER_SERVICE_URL}/users/${value}`);
+      if (!response.data) {
+        throw new Error('Invalid owner');
+      }
+    } catch (err) {
+      throw new Error('Invalid owner');
+    }
+  }),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -29,12 +51,25 @@ router.post('/',
     }
 
     try {
-      const response = await axios.post(`${process.env.TARGET_SERVICE_URL}/targets`, req.body);
-      res.send(response.data);
+      const newTarget = {
+        photo: req.file.path,
+        deadline: req.body.deadline,
+        location: req.body.location,
+        owner: req.body.owner
+      };
+      const response = await axios.post(`${process.env.TARGET_SERVICE_URL}/targets`, newTarget);
+      
+      if (!response.data) {
+        throw new Error('Failed to save target');
+      }
+
+      res.json(response.data);
     } catch (err) {
-      res.status(500).send(err);
+      console.error(err);
+      res.status(500).send(err.message);
     }
-});
+  }
+);
 
 router.get('/', 
   passport.authenticate('jwt', { session: false }),
