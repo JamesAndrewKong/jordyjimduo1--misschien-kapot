@@ -11,7 +11,10 @@ const jwtOptions = {
 passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, next) {
     axios.get(`${process.env.USER_SERVICE_URL}/users/${jwt_payload._id}`)
         .then(response => next(null, response.data))
-        .catch(err => next(err, false));
+        .catch(err => {
+            console.error('Error in JWT strategy:', err.message);
+            next(err, false);
+        });
 }));
 
 module.exports.jwtOptions = jwtOptions;

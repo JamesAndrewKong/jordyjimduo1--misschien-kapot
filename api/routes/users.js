@@ -24,12 +24,24 @@ router.get('/:id', (req, res, next) => {
 });
 
 router.post('/', async (req, res, next) => {
-    axios.post(`${process.env.USER_SERVICE_URL}/users`, req.body)
-        .then(response => {
-            res.status(201);
-            res.json(response.data);
-        })
-        .catch(() => next(createError(422, 'Could not create user')));
+    try {
+        console.log('Making POST request to user service');
+        axios.post(`${process.env.USER_SERVICE_URL}/users`, req.body)
+            .then(response => {
+                console.log('POST request to user service succeeded');
+                res.status(201);
+                res.json(response.data);
+            })
+            .catch(err => {
+                console.log('POST request to user service failed');
+                console.error('Error making POST request:', err.message);
+                console.error('Request body:', req.body);
+                next(createError(422, 'Could not create user'));
+            });
+    } catch (err) {
+        console.error('Error before POST request:', err.message);
+        next(err);
+    }
 });
 
 router.post('/login', async (req, res, next) => {

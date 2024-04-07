@@ -20,7 +20,10 @@ router.post('/login', (req, res, next) => {
                 res.status(401).json({message: 'passwords did not match'});
             }
         })
-        .catch(() => res.status(401).json({message: 'No such user found'}));
+        .catch(err => {
+            console.error('Error in /login:', err.message);
+            console.error('Request body:', req.body);
+            res.status(401).json({message: 'No such user found'});
+        });
 });
-
 module.exports = router;

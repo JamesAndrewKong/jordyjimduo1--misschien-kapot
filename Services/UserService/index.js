@@ -48,16 +48,15 @@ app.get('/username/:userName', (req, res, next) => {
 });
 
 // error handler
-app.use(function(err, req, res) {
-    // Set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use(function(err, req, res, next) {
+    // Log the error
+    console.error('Error in request:', err.message);
   
-    // Render the error page
+    // Send error as JSON
     res.status(err.status || 500);
-    res.render('error');
+    res.json({ error: err.message });
   });
-
+  
   if (process.env.NODE_ENV !== 'test') {
     app.set('port', process.env.APP_PORT || 3000);
 
@@ -66,5 +65,15 @@ app.use(function(err, req, res) {
 
     server.listen(port, () => console.log(`Listening on port ${port}`));
 }
+
+app.post('/users', async (req, res, next) => {
+    const user = new User(req.body);
+    user.save()
+        .then(data => res.status(201).json(data))
+        .catch(err => {
+            console.error('Error saving user:', err);
+            next(err);
+        });
+});
 
 module.exports = app;

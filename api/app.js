@@ -45,9 +45,9 @@ app.use((req, res, next) => {
 //require('./vendors/mongoose');
 require('./vendors/passportJWT');
 
-// View engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+// View engine setup Assignment zegt dat dit niet hoeft: "Bij dit vak hoef je geen GUIs te maken in plaats daarvan gebruiken we Postman."
+//app.set('views', path.join(__dirname, 'views'));
+//app.set('view engine', 'jade');
 
 app.use(passport.initialize());
 app.use(logger('dev'));
@@ -80,6 +80,9 @@ app.use(function(err, req, res) {
   // Set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  console.error('Error in request:', err.message);
+  console.error('Request URL:', req.originalUrl);
 
   // Render the error page
   res.status(err.status || 500);
