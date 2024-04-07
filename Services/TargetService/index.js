@@ -6,8 +6,6 @@ const validId = require('./helpers/validId');
 const logger = require('morgan');
 const promBundle = require('express-prom-bundle');
 
-const targetsRouter = require('./routes/targets');
-
 const metricsMiddleware = promBundle({
     includePath: true,
     includeStatusCode: true,
@@ -16,6 +14,7 @@ const metricsMiddleware = promBundle({
         collectDefaultMetrics: {},
     },
 });
+
 const app = express();
 
 require('./database');
@@ -24,7 +23,6 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(metricsMiddleware);
-app.use('/targets', targetsRouter);
 
 app.get('/targets', async (req, res, next) => {
     const result = Target.find().byPage(req.query.page, req.query.perPage);
