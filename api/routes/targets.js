@@ -8,7 +8,7 @@ const router = express.Router();
 
 async function verifyOwner(req, res, next) {
   try {
-    const response = await axios.get(`http://targetservice/targets/${req.params.id}`);
+    const response = await axios.get(`${process.env.TARGET_SERVICE_URL}/targets/${req.params.id}`);
     if (req.user.id !== response.data.owner.toString()) {
       return res.status(403).send('You are not the owner of this target');
     }
@@ -29,7 +29,7 @@ router.post('/',
     }
 
     try {
-      const response = await axios.post('http://targetservice/targets', req.body);
+      const response = await axios.post(`${process.env.TARGET_SERVICE_URL}/targets`, req.body);
       res.send(response.data);
     } catch (err) {
       res.status(500).send(err);
@@ -40,7 +40,7 @@ router.get('/',
   passport.authenticate('jwt', { session: false }),
   async (req, res, next) => {
   try {
-    const response = await axios.get('http://targetservice/targets', {
+    const response = await axios.get(`${process.env.TARGET_SERVICE_URL}/targets`, {
       params: {
         page: req.query.page,
         perPage: req.query.perPage,
@@ -56,7 +56,7 @@ router.get('/:id',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
   try {
-    const response = await axios.get(`http://targetservice/targets/${req.params.id}`);
+    const response = await axios.get(`${process.env.TARGET_SERVICE_URL}/targets/${req.params.id}`);
     res.send(response.data);
   } catch (err) {
     res.status(500).send(err);
@@ -75,7 +75,7 @@ router.put('/:id',
     }
 
     try {
-      const response = await axios.put(`http://targetservice/targets/${req.params.id}`, req.body);
+      const response = await axios.put(`${process.env.TARGET_SERVICE_URL}/targets/${req.params.id}`, req.body);
       res.send(response.data);
     } catch (err) {
       res.status(500).send(err);
@@ -87,7 +87,7 @@ router.delete('/:id',
   verifyOwner,
   async (req, res) => {
   try {
-    const response = await axios.delete(`http://targetservice/targets/${req.params.id}`);
+    const response = await axios.delete(`${process.env.TARGET_SERVICE_URL}/targets/${req.params.id}`);
     res.send(response.data);
   } catch (err) {
     res.status(500).send(err);

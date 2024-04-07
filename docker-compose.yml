@@ -33,6 +33,7 @@ services:
       # MONGO_URL: ${MONGO_URL}/${DB_NAME}
       JWT_SECRET: '${JWT_SECRET}'
       USER_SERVICE_URL: 'http://user-service:${USER_SERVICE_PORT:-3000}'
+      TARGET_SERVICE_URL: 'http://target-service:${TARGET_SERVICE_PORT:-3000}'
     volumes:
       - ./api:/app
     networks:
