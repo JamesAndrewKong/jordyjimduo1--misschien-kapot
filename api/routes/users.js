@@ -44,19 +44,4 @@ router.post('/', async (req, res, next) => {
     }
 });
 
-router.post('/login', async (req, res, next) => {
-    try {
-        const response = await axios.get(`${process.env.USER_SERVICE_URL}/users?userName=${req.body.userName}`);
-        const user = response.data[0];
-        if (!user || !bcrypt.compareSync(req.body.password, user.password)) {
-            return next(createError(401, 'Invalid username or password'));
-        }
-
-        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token });
-    } catch (error) {
-        next(error);
-    }
-});
-
 module.exports = router;
