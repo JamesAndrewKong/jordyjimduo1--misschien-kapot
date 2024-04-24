@@ -3,7 +3,6 @@ require('./services/clockservice');
 
 const prometheus = require('prom-client');
 const emailRouter = require('./routes/email');
-const indexRouter = require('./routes/index');
 const metricsRouter = require('./routes/metrics');
 const photosRouter = require('./routes/photos');
 const targetsRouter = require('./routes/targets');
@@ -62,7 +61,7 @@ app.use(metricsMiddleware);
 const jwtToken = passport.authenticate('jwt', { session: false });
 
 // Mount route handlers
-app.use('/', indexRouter);
+app.use('/', require('./routes'));
 app.use('/auth', require('./routes/auth'));
 app.use('/users', require('./routes/users'));
 app.use('/targets', targetsRouter);
