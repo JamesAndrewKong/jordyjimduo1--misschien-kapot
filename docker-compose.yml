@@ -68,13 +68,6 @@ services:
     working_dir: /var/www/html
     volumes:
       - ./Services/TargetService:/var/www/html
-  
-  # Monitoring services
-  grafana:
-    build: ./Services/Grafana
-    container_name: grafana
-    ports:
-      - '${GRAFANA_PORT:-5000}:3000'
     networks:
       - week4network
     environment:
@@ -86,6 +79,16 @@ services:
     depends_on:
       - messagebus
       - mydatabase
+    restart: unless-stopped
+
+  # Monitoring services
+  grafana:
+    build: ./Services/Grafana
+    container_name: grafana
+    ports:
+      - '${GRAFANA_PORT:-5000}:3000'
+    networks:
+      - week4network
     restart: unless-stopped
     depends_on:
       - prometheus
