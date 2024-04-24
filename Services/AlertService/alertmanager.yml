@@ -1,0 +1,22 @@
+global:
+  smtp_smarthost: 'mailhog:1025'
+  smtp_from: 'Services Alert Manager <alerts@services.nl>'
+  smtp_require_tls: false
+
+route:
+  receiver: mail
+  group_wait: 10s
+  group_interval: 5m
+  repeat_interval: 10s
+  routes:
+    - match:
+        severity: high
+      receiver: mail
+      repeat_interval: 1m
+
+receivers:
+  - name: mail
+    email_configs:
+      - to: "info@services.nl"
+        headers:
+          Subject: "Alert ({{ .Status }}): ({{ .CommonLabels.alertname }})"

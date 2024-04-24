@@ -44,6 +44,9 @@ app.use((req, res, next) => {
 
 //require('./vendors/mongoose');
 require('./vendors/passportJWT');
+// View engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
 
 // View engine setup Assignment zegt dat dit niet hoeft: "Bij dit vak hoef je geen GUIs te maken in plaats daarvan gebruiken we Postman."
 //app.set('views', path.join(__dirname, 'views'));
