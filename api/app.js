@@ -2,7 +2,6 @@ require('dotenv').config();
 require('./services/clockservice');
 
 const prometheus = require('prom-client');
-const emailRouter = require('./routes/email');
 const metricsRouter = require('./routes/metrics');
 const photosRouter = require('./routes/photos');
 const targetsRouter = require('./routes/targets');
@@ -68,7 +67,6 @@ app.use('/targets', targetsRouter);
 app.use('/metrics', metricsRouter); // Mount the metrics router at the '/metrics' path
 app.use('/uploads', express.static('uploads'));  // serve the 'uploads' directory as static files
 app.use('/photos', photosRouter);
-app.use('/email', emailRouter);
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
     next(createError(404));
