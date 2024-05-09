@@ -46,15 +46,15 @@ app.use(function(err, req, res) {
   
     res.status(err.status || 500);
     res.send(message);
-
-    if (process.env.NODE_ENV !== 'test') {
-        app.set('port', process.env.APP_PORT || 3000);
-    
-        const server = http.createServer(app);
-        const port = process.env.APP_PORT || 3000;
-    
-        server.listen(port, () => console.log(`Listening on port ${port}`));
-    }
 });
+
+if (process.env.NODE_ENV !== 'test') {
+    app.set('port', process.env.APP_PORT || 3000);
+
+    const server = http.createServer(app);
+    const port = process.env.APP_PORT || 3000;
+
+    server.listen(port, () => console.log(`Listening on port ${port}`));
+}
 
 module.exports = app;
