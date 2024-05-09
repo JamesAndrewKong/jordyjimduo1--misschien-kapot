@@ -31,19 +31,6 @@ router.post('/',
     }
     return true;
   }),
-  body('owner').custom(async (value) => {
-    if (!value) {
-      throw new Error('Owner is required');
-    }
-    try {
-      const response = await axios.get(`${process.env.USER_SERVICE_URL}/users/${value}`);
-      if (!response.data) {
-        throw new Error('Invalid owner');
-      }
-    } catch (err) {
-      throw new Error('Invalid owner');
-    }
-  }),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -55,7 +42,7 @@ router.post('/',
         photo: req.file.path,
         deadline: req.body.deadline,
         location: req.body.location,
-        owner: req.body.owner
+        owner: req.user.username
       };
       const response = await axios.post(`${process.env.TARGET_SERVICE_URL}/targets`, newTarget);
       
