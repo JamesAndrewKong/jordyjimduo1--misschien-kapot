@@ -29,11 +29,13 @@ services:
       dockerfile: Dockerfile
     ports:
       - '${APP_PORT:-8000}:3000'
+    env_file:
+      - .env
     environment:
       # MONGO_URL: ${MONGO_URL}/${DB_NAME}
       JWT_SECRET: '${JWT_SECRET}'
-      USER_SERVICE_URL: 'http://user-service:${USER_SERVICE_PORT:-3000}'
       TARGET_SERVICE_URL: 'http://target-service:${TARGET_SERVICE_PORT:-4000}'
+      USER_SERVICE_URL: 'http://service-user:${USER_SERVICE_PORT:-3000}'
     volumes:
       - ./api:/app
     networks:
@@ -73,6 +75,8 @@ services:
       - week4network
     environment:
       APP_PORT: '${TARGET_SERVICE_PORT:-4000}'
+      USER_SERVICE_URL: 'http://service-user:${USER_SERVICE_PORT:-3000}'
+      TARGET_SERVICE_URL: 'http://service-target:${TARGET_SERVICE_PORT:-4000}'
       DB_URL: 'mongodb://mydatabase:27017/targets'
       DB_USERNAME: '${DB_USERNAME:-week4username}'
       DB_PASSWORD: '${DB_PASSWORD:-week4password}'
