@@ -14,6 +14,9 @@ const logger = require('morgan');
 const passport = require('passport');
 const promBundle = require('express-prom-bundle');
 
+const multer = require('multer');
+const upload = multer();
+
 const metricsMiddleware = promBundle({
   includePath: true,
   includeStatusCode: true,
@@ -50,9 +53,11 @@ require('./vendors/passportJWT');
 app.use(passport.initialize());
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(upload.single('photo'));
 
 //app.set('view engine', 'json');
 app.use(metricsMiddleware);

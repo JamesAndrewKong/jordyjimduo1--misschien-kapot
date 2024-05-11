@@ -8,17 +8,22 @@ router.post('/', async (req, res, next) => {
     try {
         console.log('Making GET request to user service');
         const username = req.body.owner;
+        console.log(`Owner username: ${username}`); 
         const jwtToken = req.headers.authorization.split(' ')[1];  // Extract token from 'Bearer <token>'
 
-        axios.get(`${process.env.USER_SERVICE_URL}/users?username=${username}`, {
-            headers: {
-                'Authorization': `Bearer ${jwtToken}`
-            }
-        })
+        axios.get(`${process.env.USER_SERVICE_URL}/username/${username}`, {
+              headers: {
+                  'Authorization': `Bearer ${jwtToken}`
+              }
+          })
             .then(response => {
                 console.log('GET request to user service succeeded');
                 req.body.owner = response.data._id;  // Replace username with user ID
 
+                if (req.file) {
+                  req.body.photo = req.file.path;
+                }
+                
                 console.log('Making POST request to target service');
                 axios.post(`${process.env.TARGET_SERVICE_URL}/targets`, req.body)
                     .then(response => {
