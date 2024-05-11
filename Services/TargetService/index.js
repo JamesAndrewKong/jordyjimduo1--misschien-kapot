@@ -1,5 +1,6 @@
 const express = require('express');
-const Target = require('./models/Target');
+const mongoose = require('mongoose');
+const Target = mongoose.models.Target || require('./models/target');
 const http = require('http');
 const logger = require('morgan');
 const promBundle = require('express-prom-bundle');
