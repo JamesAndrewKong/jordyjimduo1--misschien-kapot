@@ -57,8 +57,6 @@ app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(upload.single('photo'));
-
 //app.set('view engine', 'json');
 app.use(metricsMiddleware);
 

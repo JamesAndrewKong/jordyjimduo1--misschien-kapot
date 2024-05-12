@@ -3,13 +3,18 @@ const router = express.Router();
 const axios = require('axios');
 const paginate = require('../helpers/paginatedResponse');
 const createError = require('http-errors');
+const FormData = require('form-data');
+const fs = require('fs');
 
-router.post('/', async (req, res, next) => {
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
+
+router.post('/', upload.single('photo'), async (req, res, next) => {
     try {
         console.log('Making GET request to user service');
         const username = req.body.owner;
         console.log(`Owner username: ${username}`); 
-        const jwtToken = req.headers.authorization.split(' ')[1];  // Extract token from 'Bearer <token>'
+        const jwtToken = req.headers.authorization.split(' ')[1]; 
 
         axios.get(`${process.env.USER_SERVICE_URL}/username/${username}`, {
               headers: {
@@ -18,14 +23,33 @@ router.post('/', async (req, res, next) => {
           })
             .then(response => {
                 console.log('GET request to user service succeeded');
-                req.body.owner = response.data._id;  // Replace username with user ID
+                req.body.owner = response.data._id;  
 
-                if (req.file) {
-                  req.body.photo = req.file.path;
+                let data = req.body;
+                let config = {
+                    headers: {
+                        'Authorization': `Bearer ${jwtToken}`,
+                    },
+                };
+
+                if (req.file && req.file.buffer) {
+                    const form = new FormData();
+                    form.append('photo', req.file.buffer, {
+                        filename: req.file.originalname,
+                        contentType: req.file.mimetype,
+                    });
+
+                    // Append other fields to form data
+                    for (const key in req.body) {
+                        form.append(key, req.body[key]);
+                    }
+
+                    data = form;
+                    config.headers = { ...config.headers, ...form.getHeaders() };
                 }
-                
+
                 console.log('Making POST request to target service');
-                axios.post(`${process.env.TARGET_SERVICE_URL}/targets`, req.body)
+                axios.post(`${process.env.TARGET_SERVICE_URL}/targets`, data, config)
                     .then(response => {
                         console.log('POST request to target service succeeded');
                         res.status(201);
