@@ -59,4 +59,29 @@ if (process.env.NODE_ENV !== 'test') {
     server.listen(port, () => console.log(`Listening on port ${port}`));
 }
 
+app.get('/targets/location/:location', async (req, res, next) => {
+  Target.find({ location: req.params.location })
+      .then(targets => res.status(200).json(targets))
+      .catch(next);
+});
+
+app.delete('/targets/:targetId/photo', async (req, res) => {
+  const target = await Target.findById(req.params.targetId);
+  if (!target) {
+      return res.status(404).send('Target not found');
+  }
+
+  fs.unlink(target.photo, async (err) => {
+      if (err) {
+          console.error('Error deleting photo:', err); 
+          return res.status(500).send('Failed to delete photo');
+      }
+      target.photo = undefined;
+      await target.save(); 
+      res.status(204).send();
+  });
+});
+
+
+
 module.exports = app;

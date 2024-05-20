@@ -3,7 +3,6 @@ const axios = require('axios');
 const ScoreService = require('./scoreservice');
 const API_URL = process.env.API_URL;
 
-// Schedule a task to run every minute
 cron.schedule('* * * * *', async () => {
   const now = new Date();
   const response = await axios.get(`${API_URL}/targets`);
@@ -11,6 +10,8 @@ cron.schedule('* * * * *', async () => {
 
   for (const target of targets) {
     const winner = await ScoreService.calculateScores(target);
-    // Notify the target owner and the winner
+    
+    //TODO: Connect to mail service
+    axios.post(`${API_URL}/mail`, { targetOwner: target.owner, winner });
   }
 });

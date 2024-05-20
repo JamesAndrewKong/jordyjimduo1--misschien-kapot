@@ -1,29 +1,58 @@
-const fs = require('fs');
-const path = require('path');
-const imaggaService = require('./imagga');
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const Score = require('../models/Score');
+const app = express();
+app.use(bodyParser.json());
 
-class ScoreService {
-  async calculateScores(target) {
-    const targetTags = await imaggaService.getTags(target.photo);
-    const targetDir = path.join(__dirname, '../uploads', target.id.toString());
-    const photoFiles = fs.readdirSync(targetDir);
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-    let highestScore = 0;
-    let winner = null;
-
-    for (const photoFile of photoFiles) {
-      const photoPath = path.join(targetDir, photoFile);
-      const photoTags = await imaggaService.getTags(photoPath);
-      const score = imaggaService.calculateSimilarity(targetTags, photoTags);
-
-      if (score > highestScore) {
-        highestScore = score;
-        winner = photoPath;
-      }
+const authenticate = (req, res, next) => {
+    const token = req.headers.authorization;
+    if (!token) {
+        return res.status(401).send('Access denied. No token provided.');
     }
 
-    return winner;
-  }
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+        next();
+    } catch (ex) {
+        res.status(400).send('Invalid token.');
+    }
+};
+
+app.post('/calculate', authenticate, async (req, res) => {
+    const { targetId, userId, tagsTarget, tagsSubmission } = req.body;
+    const score = calculateScore(tagsTarget, tagsSubmission);
+    const scoreEntry = new Score({ targetId, userId, score, timestamp: new Date() });
+
+    try {
+        await scoreEntry.save();
+        res.json(scoreEntry);
+    } catch (error) {
+        res.status(500).send('Error saving score');
+    }
+});
+
+function calculateScore(tagsTarget, tagsSubmission) {
+    const matchedTags = tagsSubmission.filter(tag => tagsTarget.includes(tag));
+    return matchedTags.length; // This is a simplistic scoring mechanism
 }
 
-module.exports = new ScoreService();
+app.get('/scores/:targetId', authenticate, async (req, res) => {
+    if (req.user.id !== req.params.targetId) {
+        return res.status(403).send('Access denied.');
+    }
+
+    try {
+        const targetScores = await Score.find({ targetId: req.params.targetId });
+        res.json(targetScores);
+    } catch (error) {
+        res.status(500).send('Error retrieving scores');
+    }
+});
+
+const PORT = process.env.PORT || 3002;
+app.listen(PORT, () => console.log(`Score Service running on port ${PORT}`));
