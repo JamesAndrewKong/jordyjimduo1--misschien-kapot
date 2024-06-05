@@ -66,6 +66,7 @@ const jwtToken = passport.authenticate('jwt', { session: false });
 app.use('/', require('./routes'));
 app.use('/auth', require('./routes/auth'));
 app.use('/users', require('./routes/users'));
+app.use('/attempts', jwtToken, require('./routes/attempts'));
 app.use('/targets', targetsRouter);
 app.use('/entries', entriesRouter);
 app.use('/metrics', metricsRouter); // Mount the metrics router at the '/metrics' path

@@ -46,6 +46,25 @@ services:
       - user-service
       - target-service
 
+  attempt-service:
+    image: node:20.11.1
+    container_name: 'service-attempt'
+    working_dir: /var/www/html
+    volumes:
+      - ./Services/AttemptService:/var/www/html
+    networks:
+      - week4network
+    environment:
+      APP_PORT: '${ATTEMPT_SERVICE_PORT:-3000}'
+      DB_URL: 'mongodb://mydatabase:27017/attempts'
+      DB_USERNAME: '${DB_USERNAME:-week4username}'
+      DB_PASSWORD: '${DB_PASSWORD:-week4password}'
+    command: bash -c "npm install && npm run watch"
+    # restart: unless-stopped
+    depends_on:
+      - messagebus
+      - mydatabase
+
   user-service:
     image: node:20.11.1
     container_name: 'service-user'
@@ -143,6 +162,7 @@ services:
     restart: unless-stopped
     ports:
       - '${MAILHOG_PORT:-8004}:8025'
+      - '1025:1025'
     networks:
       - week4network
 

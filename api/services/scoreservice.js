@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-const Score = require('../models/Score');
+// const Score = require('../models/Score');
 const app = express();
 app.use(bodyParser.json());
 
@@ -24,16 +24,16 @@ const authenticate = (req, res, next) => {
 };
 
 app.post('/calculate', authenticate, async (req, res) => {
-    const { targetId, userId, tagsTarget, tagsSubmission } = req.body;
-    const score = calculateScore(tagsTarget, tagsSubmission);
-    const scoreEntry = new Score({ targetId, userId, score, timestamp: new Date() });
+    // const { targetId, userId, tagsTarget, tagsSubmission } = req.body;
+    // const score = calculateScore(tagsTarget, tagsSubmission);
+    // const scoreEntry = new Score({ targetId, userId, score, timestamp: new Date() });
 
-    try {
-        await scoreEntry.save();
-        res.json(scoreEntry);
-    } catch (error) {
-        res.status(500).send('Error saving score');
-    }
+    // try {
+    //     await scoreEntry.save();
+    //     res.json(scoreEntry);
+    // } catch (error) {
+    //     res.status(500).send('Error saving score');
+    // }
 });
 
 function calculateScore(tagsTarget, tagsSubmission) {
@@ -42,17 +42,17 @@ function calculateScore(tagsTarget, tagsSubmission) {
 }
 
 app.get('/scores/:targetId', authenticate, async (req, res) => {
-    if (req.user.id !== req.params.targetId) {
-        return res.status(403).send('Access denied.');
-    }
+    // if (req.user.id !== req.params.targetId) {
+    //     return res.status(403).send('Access denied.');
+    // }
 
-    try {
-        const targetScores = await Score.find({ targetId: req.params.targetId });
-        res.json(targetScores);
-    } catch (error) {
-        res.status(500).send('Error retrieving scores');
-    }
+    // try {
+    //     const targetScores = await Score.find({ targetId: req.params.targetId });
+    //     res.json(targetScores);
+    // } catch (error) {
+    //     res.status(500).send('Error retrieving scores');
+    // }
 });
 
-const PORT = process.env.PORT || 3002;
-app.listen(PORT, () => console.log(`Score Service running on port ${PORT}`));
+// const PORT = process.env.PORT || 3002;
+// app.listen(PORT, () => console.log(`Score Service running on port ${PORT}`));
