@@ -1,5 +1,5 @@
 require('dotenv').config();
-require('./services/clockservice');
+// require('./services/clockservice');
 
 const prometheus = require('prom-client');
 const metricsRouter = require('./routes/metrics');

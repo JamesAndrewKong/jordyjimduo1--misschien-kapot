@@ -37,6 +37,6 @@ cron.schedule('* * * * *', async () => {
 
 
     //TODO: Connect to mail service
-    axios.post(`${API_URL}/mail`, { targetOwner: target.owner, winner });
+    // axios.post(`${API_URL}/mail`, { targetOwner: target.owner, winner });
   }
 });

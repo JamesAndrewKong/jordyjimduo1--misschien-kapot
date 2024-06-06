@@ -1,9 +1,12 @@
 const express = require('express');
 const User = require('./models/user');
-const http = require('http');
 const paginate = require('./helpers/paginatedResponse');
 const validId = require('./helpers/validId');
+const repo = require('./repo/userRepo');
+const http = require('http');
 const logger = require('morgan');
+const pub = require('./publisher');
+const sub = require('./subscriber');
 const promBundle = require('express-prom-bundle');
 
 const metricsMiddleware = promBundle({
@@ -47,17 +50,27 @@ app.get('/username/:userName', (req, res, next) => {
         .catch(next);
 });
 
+app.post('/users', async (req, res, next) => {
+    const orgValue = req.body;
+
+    repo.create(orgValue)
+        .then(result => {
+            res.status(201);
+            res.json(result);
+        })
+        .catch(next);
+});
+
 // error handler
-app.use(function(err, req, res, next) {
-    // Log the error
-    console.error('Error in request:', err.message);
-  
-    // Send error as JSON
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+    pub({from: 'user-service_index', error: err}, 'report');
+
     res.status(err.status || 500);
-    res.json({ error: err.message });
-  });
-  
-  if (process.env.NODE_ENV !== 'test') {
+    res.json(err);
+});
+
+if (process.env.NODE_ENV !== 'test') {
     app.set('port', process.env.APP_PORT || 3000);
 
     const server = http.createServer(app);
@@ -65,15 +78,5 @@ app.use(function(err, req, res, next) {
 
     server.listen(port, () => console.log(`Listening on port ${port}`));
 }
-
-app.post('/users', async (req, res, next) => {
-    const user = new User(req.body);
-    user.save()
-        .then(data => res.status(201).json(data))
-        .catch(err => {
-            console.error('Error saving user:', err);
-            next(err);
-        });
-});
 
 module.exports = app;

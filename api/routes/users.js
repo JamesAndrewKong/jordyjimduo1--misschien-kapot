@@ -3,8 +3,6 @@ const router = express.Router();
 const axios = require('axios');
 const paginate = require('../helpers/paginatedResponse');
 const createError = require('http-errors');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 
 router.get('/', async (req, res, next) => {
     axios.get(`${process.env.USER_SERVICE_URL}/users`, {
@@ -23,25 +21,32 @@ router.get('/:id', (req, res, next) => {
         .catch(next);
 });
 
-router.post('/', async (req, res, next) => {
+//TARGETS TO BE IMPLEMENTED
+
+router.get('/:id/attempts', async (req, res, next) => {
     try {
-        console.log('Making POST request to user service');
-        axios.post(`${process.env.USER_SERVICE_URL}/users`, req.body)
-            .then(response => {
-                console.log('POST request to user service succeeded');
-                res.status(201);
-                res.json(response.data);
-            })
-            .catch(err => {
-                console.log('POST request to user service failed');
-                console.error('Error making POST request:', err.message);
-                console.error('Request body:', req.body);
-                next(createError(422, 'Could not create user'));
-            });
-    } catch (err) {
-        console.error('Error before POST request:', err.message);
-        next(err);
+        const {data} = await axios.get(`${process.env.USER_SERVICE_URL}/users/${req.params.id}`);
+
+        axios.get(`${process.env.ATTEMPT_SERVICE_URL}/attempts?userId=${data._id}`, {
+            params: {
+                page: req.query.page,
+                perPage: req.query.perPage,
+            },
+        })
+            .then(response => res.json(paginate(response.data, req)))
+            .catch(next);
+    } catch (error) {
+        next(createError('User not found', 404));
     }
+});
+
+router.post('/', async (req, res, next) => {
+    axios.post(`${process.env.USER_SERVICE_URL}/users`, req.body)
+        .then(response => {
+            res.status(201);
+            res.json(response.data);
+        })
+        .catch(() => next(createError(422, 'Could not create user')));
 });
 
 module.exports = router;
