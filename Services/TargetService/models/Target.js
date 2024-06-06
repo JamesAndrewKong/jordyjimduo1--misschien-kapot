@@ -1,15 +1,17 @@
 const mongoose = require('mongoose');
-const addPagination = require('../helpers/paginationQuery');
 
-const TargetSchema = new mongoose.Schema({
-  photo: String,
-  location: String,
-  deadline: Date,
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
-});
+const targetSchema = new mongoose.Schema({
+    description: {type: String},
+    imageId: {type: String, required: false},
+    location: {
+        lat: {type: Number, required: true},
+        lon: {type: Number, required: true},
+    },
+    userId: {type: String, required: true},
+}, { versionKey: false });
 
-TargetSchema.query.byPage = addPagination;
+targetSchema.query.byPage = require('../helpers/paginationQuery');
 
-const Target = mongoose.model('Target', TargetSchema);
+const Target = mongoose.model('Target', targetSchema);
 
 module.exports = Target;

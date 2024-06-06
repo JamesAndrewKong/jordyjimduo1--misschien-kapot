@@ -1,5 +1,12 @@
-const mongoose = require('mongoose');
+const {ObjectId} = require('mongodb');
 
-module.exports = function(id) {
-  return mongoose.Types.ObjectId.isValid(id);
+module.exports = (id) => {
+    if (id == null) return false;
+
+    try {
+        new ObjectId(id);
+        return true;
+    } catch {
+        return false;
+    }
 };

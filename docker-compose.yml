@@ -89,6 +89,28 @@ services:
     depends_on:
       - messagebus
       - mydatabase
+
+  image-service:
+    image: node:20.11.1
+    container_name: 'service-image'
+    working_dir: /var/www/html
+    volumes:
+      - ./Services/ImageService:/var/www/html
+    networks:
+      - week4network
+    environment:
+      APP_PORT: '${IMAGE_SERVICE_PORT:-3000}'
+      DB_URL: 'mongodb://mydatabase:27017/images'
+      DB_USERNAME: '${DB_USERNAME:-week4username}'
+      DB_PASSWORD: '${DB_PASSWORD:-week4password}'
+      BROKER_URL: 'amqp://messagebus:5672'
+      IMAGE_EXT_API_KEY: '${IMAGE_EXT_API_KEY}'
+      IMAGE_EXT_API_SECRET: '${IMAGE_EXT_API_SECRET}'
+    command: bash -c "npm install && npm run watch"
+    # restart: unless-stopped
+    depends_on:
+      - messagebus
+      - mydatabase
       
   target-service:
     image: node:20.11.1
@@ -100,11 +122,10 @@ services:
       - week4network
     environment:
       APP_PORT: '${TARGET_SERVICE_PORT:-3000}'
-      USER_SERVICE_URL: 'http://service-user:${USER_SERVICE_PORT:-3000}'
-      TARGET_SERVICE_URL: 'http://service-target:${TARGET_SERVICE_PORT:-4000}'
       DB_URL: 'mongodb://mydatabase:27017/targets'
       DB_USERNAME: '${DB_USERNAME:-week4username}'
       DB_PASSWORD: '${DB_PASSWORD:-week4password}'
+      BROKER_URL: 'amqp://messagebus:5672'
     command: bash -c "npm install && npm run watch"
     depends_on:
       - messagebus

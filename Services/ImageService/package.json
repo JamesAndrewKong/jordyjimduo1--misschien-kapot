@@ -1,0 +1,33 @@
+{
+    "name": "userservice",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "start": "node index.js",
+        "watch": "nodemon index.js",
+        "test": "export NODE_ENV=test && jest",
+        "lint": "eslint ."
+    },
+    "dependencies": {
+        "amqplib": "^0.10.4",
+        "axios": "^1.7.2",
+        "cookie-parser": "~1.4.4",
+        "debug": "~2.6.9",
+        "dotenv": "^16.0.0",
+        "express": "^4.17.3",
+        "express-prom-bundle": "^7.0.0",
+        "form-data": "^4.0.0",
+        "http-errors": "~1.6.3",
+        "mongodb": "^4.3.1",
+        "mongoose": "^6.2.8",
+        "morgan": "~1.9.1",
+        "prom-client": "^15.1.1"
+    },
+    "devDependencies": {
+        "eslint": "^8.8.0",
+        "jest": "^27.4.7",
+        "mongodb-memory-server": "^8.4.2",
+        "nodemon": "^2.0.15",
+        "supertest": "^6.3.4"
+    }
+}
