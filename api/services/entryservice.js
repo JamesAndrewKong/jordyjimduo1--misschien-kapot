@@ -6,8 +6,8 @@ async function getTags(imagePath) {
   const response = await axios.post('https://api.imagga.com/v2/tags', imageData, {
     headers: {
       'Authorization': `Basic ${Buffer.from(process.env.IMAGGA_API_KEY + ':').toString('base64')}`,
-      'Content-Type': 'application/octet-stream'
-    }
+      'Content-Type': 'application/octet-stream',
+    },
   });
   const tags = response.data.result.tags.map(tag => tag.tag.en);
   return tags;
@@ -27,5 +27,5 @@ async function analyzeImage(imagePath, targetId) {
 }
 
 module.exports = {
-  analyzeImage
+  analyzeImage,
 };

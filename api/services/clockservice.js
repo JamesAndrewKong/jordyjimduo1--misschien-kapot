@@ -10,8 +10,7 @@ cron.schedule('* * * * *', async () => {
 
   for (const target of targets) {
     // const winner = await ScoreService.calculateScores(target);
-    
-    
+
     //TEMP MAIL PLACEHOLDER
     // const nodemailer = require('nodemailer');
 
@@ -34,7 +33,6 @@ cron.schedule('* * * * *', async () => {
     //         .catch(next);
     // });
     //TEMP MAIL PLACEHOLDER
-
 
     //TODO: Connect to mail service
     // axios.post(`${API_URL}/mail`, { targetOwner: target.owner, winner });
