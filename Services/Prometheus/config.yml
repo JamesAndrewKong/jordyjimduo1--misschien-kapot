@@ -11,6 +11,22 @@ scrape_configs:
     static_configs:
       - targets: ['myapi:3000']
 
+  - job_name: 'attempt-service'
+    static_configs:
+      - targets: ['attempt-service:3000']
+
+  - job_name: 'image-service'
+    static_configs:
+      - targets: ['image-service:3000']
+
+  - job_name: 'target-service'
+    static_configs:
+      - targets: ['target-service:3000']
+
+  - job_name: 'user-service'
+    static_configs:
+      - targets: ['user-service:3000']
+
   - job_name: 'mongodb-exporter'
     static_configs:
       - targets: ['mongodb-exporter:9216']

@@ -1,11 +1,4 @@
 require('dotenv').config();
-// require('./services/clockservice');
-
-const prometheus = require('prom-client');
-const metricsRouter = require('./routes/metrics');
-const targetsRouter = require('./routes/targets');
-const entriesRouter = require('./routes/entries');
-
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -13,9 +6,6 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const passport = require('passport');
 const promBundle = require('express-prom-bundle');
-
-const multer = require('multer');
-const upload = multer();
 
 const metricsMiddleware = promBundle({
   includePath: true,
@@ -27,28 +17,24 @@ const metricsMiddleware = promBundle({
 });
 const app = express();
 
-// Prometheus Metrics Setup
-const registry = new prometheus.Registry();
-prometheus.collectDefaultMetrics({ register: registry });
-const httpRequestCounter = new prometheus.Counter({
-  name: 'http_requests_total',
-  help: 'Total number of HTTP requests',
-  labelNames: ['method', 'status'],
-  registers: [registry],
-});
+// //Prometheus Metrics Setup
+// const registry = new prometheus.Registry();
+// prometheus.collectDefaultMetrics({ register: registry });
+// const httpRequestCounter = new prometheus.Counter({
+//   name: 'http_requests_total',
+//   help: 'Total number of HTTP requests',
+//   labelNames: ['method', 'status'],
+//   registers: [registry],
+// });
 
-// Middleware for Prometheus Metrics
-app.use((req, res, next) => {
-  httpRequestCounter.labels(req.method, res.statusCode).inc();
-  next();
-});
+// //Middleware for Prometheus Metrics
+// app.use((req, res, next) => {
+//   httpRequestCounter.labels(req.method, res.statusCode).inc();
+//   next();
+// });
 
 //require('./vendors/mongoose');
 require('./vendors/passportJWT');
-
-// View engine setup Assignment zegt dat dit niet hoeft: "Bij dit vak hoef je geen GUIs te maken in plaats daarvan gebruiken we Postman."
-//app.set('views', path.join(__dirname, 'views'));
-//app.set('view engine', 'jade');
 
 app.use(passport.initialize());
 app.use(logger('dev'));
@@ -68,27 +54,19 @@ app.use('/auth', require('./routes/auth'));
 app.use('/users', require('./routes/users'));
 app.use('/attempts', jwtToken, require('./routes/attempts'));
 app.use('/images', require('./routes/images'));
-app.use('/targets', jwtToken, targetsRouter);
-app.use('/entries', entriesRouter);
-app.use('/metrics', metricsRouter); // Mount the metrics router at the '/metrics' path
-app.use('/uploads', express.static('uploads'));  // serve the 'uploads' directory as static files
+app.use('/targets', jwtToken, require('./routes/targets'));
+
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
     next(createError(404));
 });
 
-// Error handler
-app.use(function(err, req, res) {
-  // Set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  console.error('Error in request:', err.message);
-  console.error('Request URL:', req.originalUrl);
-
-  // Render the error page
+// error handler
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
   res.status(err.status || 500);
-  res.render('error');
+
+  res.json(err.toString());
 });
 
 module.exports = app;

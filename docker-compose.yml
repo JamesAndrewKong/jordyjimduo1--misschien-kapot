@@ -1,63 +1,54 @@
 version: '3.8'
 
-services:
-  messagebus:
-    image: rabbitmq:latest
-    container_name: messagebus
+services:  
+
+  # API
+  myapi:
+    container_name: myapi
+    image: node:20.11.1
+    working_dir: /var/www/html
+    volumes:
+      - ./api:/var/www/html
+    environment:
+      JWT_SECRET: '${JWT_SECRET}'
+      TARGET_SERVICE_URL: 'http://target-service:${TARGET_SERVICE_PORT:-4000}'
+      USER_SERVICE_URL: 'http://service-user:${USER_SERVICE_PORT:-3000}'
+      IMAGE_SERVICE_URL: 'http://image-service:${IMAGE_SERVICE_PORT:-3000}'
+      ATTEMPT_SERVICE_URL: 'http://attempt-service:${ATTEMPT_SERVICE_PORT:-3000}'
+    command: bash -c "npm install && npm run watch"
+    ports:
+      - '${APP_PORT:-8000}:3000'
+    depends_on:
+      - user-service
+      - target-service
+      - image-service
+      - attempt-service
     networks:
       - week4network
-    ports:
-      - '${BROKER_HTTP_PORT:-15672}:15672'
-    restart: unless-stopped
-    
+
+  # Database
   mydatabase:
-    image: mongo:latest
     container_name: mydatabase
-    restart: always
+    image: mongo:latest
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME:-week4username}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD:-week4password}
     volumes:
       - mongo_data:/data/db
-      # - ./data/db:/data/db
-    networks:
-      - week4network
+      - ./data/db:/data/db
     ports:
       - "27017:27017"
-
-  myapi:
-    build:
-      context: ./api
-      dockerfile: Dockerfile
-    ports:
-      - '${APP_PORT:-8000}:3000'
-    env_file:
-      - .env
-    environment:
-      # MONGO_URL: ${MONGO_URL}/${DB_NAME}
-      JWT_SECRET: '${JWT_SECRET}'
-      TARGET_SERVICE_URL: 'http://target-service:${TARGET_SERVICE_PORT:-4000}'
-      USER_SERVICE_URL: 'http://service-user:${USER_SERVICE_PORT:-3000}'
-      ATTEMPT_SERVICE_URL: 'http://attempt-service:${ATTEMPT_SERVICE_PORT:-3000}'
-    volumes:
-      - ./api:/app
+    restart: always
     networks:
       - week4network
-    container_name: myapi
-    depends_on:
-      - mydatabase
-      - user-service
-      - target-service
-      - attempt-service
 
+  # Services
   attempt-service:
-    image: node:20.11.1
     container_name: 'service-attempt'
+    image: node:20.11.1
     working_dir: /var/www/html
     volumes:
       - ./Services/AttemptService:/var/www/html
-    networks:
-      - week4network
     environment:
       APP_PORT: '${ATTEMPT_SERVICE_PORT:-3000}'
       DB_URL: 'mongodb://mydatabase:27017/attempts'
@@ -65,19 +56,19 @@ services:
       DB_PASSWORD: '${DB_PASSWORD:-week4password}'
       BROKER_URL: 'amqp://messagebus:5672'
     command: bash -c "npm install && npm run watch"
-    # restart: unless-stopped
+    restart: unless-stopped
     depends_on:
       - messagebus
       - mydatabase
+    networks:
+      - week4network
 
   user-service:
-    image: node:20.11.1
     container_name: 'service-user'
+    image: node:20.11.1
     working_dir: /var/www/html
     volumes:
       - ./Services/UserService:/var/www/html
-    networks:
-      - week4network
     environment:
       APP_PORT: '${USER_SERVICE_PORT:-3000}'
       DB_URL: 'mongodb://mydatabase:27017/users'
@@ -85,19 +76,19 @@ services:
       DB_PASSWORD: '${DB_PASSWORD:-week4password}'
       BROKER_URL: 'amqp://messagebus:5672'
     command: bash -c "npm install && npm run watch"
-    # restart: unless-stopped
+    restart: unless-stopped
     depends_on:
       - messagebus
       - mydatabase
+    networks:
+      - week4network
 
   image-service:
-    image: node:20.11.1
     container_name: 'service-image'
+    image: node:20.11.1
     working_dir: /var/www/html
     volumes:
       - ./Services/ImageService:/var/www/html
-    networks:
-      - week4network
     environment:
       APP_PORT: '${IMAGE_SERVICE_PORT:-3000}'
       DB_URL: 'mongodb://mydatabase:27017/images'
@@ -107,19 +98,19 @@ services:
       IMAGE_EXT_API_KEY: '${IMAGE_EXT_API_KEY}'
       IMAGE_EXT_API_SECRET: '${IMAGE_EXT_API_SECRET}'
     command: bash -c "npm install && npm run watch"
-    # restart: unless-stopped
+    restart: unless-stopped
     depends_on:
       - messagebus
       - mydatabase
+    networks:
+      - week4network
       
   target-service:
-    image: node:20.11.1
     container_name: 'service-target'
+    image: node:20.11.1
     working_dir: /var/www/html
     volumes:
       - ./Services/TargetService:/var/www/html
-    networks:
-      - week4network
     environment:
       APP_PORT: '${TARGET_SERVICE_PORT:-3000}'
       DB_URL: 'mongodb://mydatabase:27017/targets'
@@ -127,69 +118,99 @@ services:
       DB_PASSWORD: '${DB_PASSWORD:-week4password}'
       BROKER_URL: 'amqp://messagebus:5672'
     command: bash -c "npm install && npm run watch"
+    restart: unless-stopped
     depends_on:
       - messagebus
       - mydatabase
+    networks:
+      - week4network
+
+  # Reports
+  report-service:
+    container_name: 'service-report'
+    image: node:20.11.1
+    working_dir: /var/www/html
+    volumes:
+      - ./Services/ReportService:/var/www/html
+      - ./data/logs:/var/logs
+    environment:
+      BROKER_URL: 'amqp://messagebus:5672'
+    command: bash -c "npm install && npm run watch"
     restart: unless-stopped
+    depends_on:
+      - messagebus
+    networks:
+      - week4network
+    
+  # Message broker
+  messagebus:
+    container_name: messagebus
+    image: rabbitmq:latest
+    ports:
+      - '${BROKER_HTTP_PORT:-15672}:15672'
+    restart: unless-stopped
+    networks:
+      - week4network
 
   # Monitoring services
   grafana:
-    build: ./Services/Grafana
     container_name: grafana
+    build: ./Services/Grafana
     ports:
       - '${GRAFANA_PORT:-5000}:3000'
-    networks:
-      - week4network
     restart: unless-stopped
     depends_on:
       - prometheus
+    networks:
+      - week4network
 
   prometheus:
-    image: prom/prometheus:latest
     container_name: prometheus
+    image: prom/prometheus:latest
     volumes:
       - ./Services/Prometheus:/etc/prometheus
       - ./data/prometheus:/prometheus
+    command: --web.enable-lifecycle --config.file=/etc/prometheus/config.yml
     ports:
       - '${PROM_PORT:-9090}:9090'
-    networks:
-      - week4network
-    command: --web.enable-lifecycle --config.file=/etc/prometheus/config.yml
     restart: unless-stopped
     depends_on:
       - myapi
       - mongodb-exporter
+    networks:
+      - week4network
 
   alert-manager:
     container_name: service-alert
     image: quay.io/prometheus/alertmanager
-    restart: unless-stopped
     volumes:
       - ./Services/AlertService:/etc/prometheus
     command: --config.file=/etc/prometheus/alertmanager.yml
+    restart: unless-stopped
     networks:
       - week4network
 
   mongodb-exporter:
+    container_name: mongodb-exporter
     image: bitnami/mongodb-exporter:latest
-    ports:
-      - "9216:9216"
     environment:
       MONGODB_URI: 'mongodb://${DB_USERNAME:-week4username}:${DB_PASSWORD:-week4password}@mydatabase:27017'
-    networks:
-      - week4network
-    container_name: mongodb-exporter
+    ports:
+      - "9216:9216"
+    restart: unless-stopped
     depends_on:
       - mydatabase
+    networks:
+      - week4network
 
   # Mail service
   mailhog:
     container_name: service-mail
     image: mailhog/mailhog:latest
-    restart: unless-stopped
     ports:
       - '${HTTP_MAILHOG_PORT:-8004}:8025'
       - '${SMTP_MAILHOG_PORT:-1025}:1025'
+    restart: unless-stopped
     networks:
       - week4network
 
