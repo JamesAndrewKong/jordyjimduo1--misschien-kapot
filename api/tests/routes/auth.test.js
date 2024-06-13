@@ -4,7 +4,7 @@ const request = require('supertest');
 const app = require('../../app');
 const db = require('../config/database');
 const axios = require('axios');
-const Bcrypt = require('bcrpytjs');
+const Bcrypt = require('bcryptjs');
 
 const agent = request.agent(app, {});
 
