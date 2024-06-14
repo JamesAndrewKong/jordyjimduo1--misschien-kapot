@@ -46,6 +46,12 @@ app.get('/targets/:id', (req, res, next) => {
         .catch(next);
 });
 
+app.get('/targets/location/:location', async (req, res, next) => {
+    Target.find({ location: req.params.location })
+        .then(targets => res.status(200).json(targets))
+        .catch(next);
+  });
+
 app.post('/targets', async (req, res, next) => {
     let orgValue = req.body;
     let result;

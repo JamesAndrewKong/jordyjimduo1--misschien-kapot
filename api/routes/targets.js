@@ -22,7 +22,7 @@ router.get('/:id', (req, res, next) => {
         .catch(next);
 });
 
-router.get('/attempts/:id', async (req, res, next) => {
+router.get('/attempts/:id', adminRole, async (req, res, next) => {
     try {
         const {data} = await axios.get(`${process.env.TARGET_SERVICE_URL}/targets/${req.params.id}`);
 
@@ -40,6 +40,12 @@ router.get('/attempts/:id', async (req, res, next) => {
     }
 });
 
+router.get('/location/:location', (req, res, next) => {
+    axios.get(`${process.env.TARGET_SERVICE_URL}/targets/location/${req.params.location}`)
+        .then(response => res.json(response.data))
+        .catch(next);
+});
+
 router.post('/', adminRole, (req, res, next) => {
     req.body.userId = req.user._id;
 
@@ -48,24 +54,24 @@ router.post('/', adminRole, (req, res, next) => {
         .catch(next);
 });
 
-router.post('/attempts/:id', adminRole, async (req, res, next) => {
-    try {
-        const {data} = await axios.get(`${process.env.TARGET_SERVICE_URL}/targets/${req.params.id}`);
+// router.post('/attempts/:id', adminRole, async (req, res, next) => {
+//     try {
+//         const {data} = await axios.get(`${process.env.TARGET_SERVICE_URL}/targets/${req.params.id}`);
 
-        const requestData = {
-            ...req.body,
-            userId: req.user._id,
-            targetId: data._id,
-            targetImageId: data.imageId,
-        };
+//         const requestData = {
+//             ...req.body,
+//             userId: req.user._id,
+//             targetId: data._id,
+//             targetImageId: data.imageId,
+//         };
 
-        axios.post(`${process.env.ATTEMPT_SERVICE_URL}/attempts`, requestData)
-            .then(response => res.status(201).json(response.data))
-            .catch(next);
-    } catch (error) {
-        next(createError('Target not found', 404));
-    }
-});
+//         axios.post(`${process.env.ATTEMPT_SERVICE_URL}/attempts`, requestData)
+//             .then(response => res.status(201).json(response.data))
+//             .catch(next);
+//     } catch (error) {
+//         next(createError('Target not found', 404));
+//     }
+// });
 
 router.delete('/:id', adminRole, async (req, res, next) => {
     axios.delete(`${process.env.TARGET_SERVICE_URL}/targets/${req.params.id}`,{
