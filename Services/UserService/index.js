@@ -1,7 +1,6 @@
 const express = require('express');
 const User = require('./models/user');
 const paginate = require('./helpers/paginatedResponse');
-const validId = require('./helpers/validId');
 const repo = require('./repo/userRepo');
 const http = require('http');
 const logger = require('morgan');
@@ -37,14 +36,7 @@ app.get('/users', async (req, res, next) => {
 });
 
 app.get('/users/:id', (req, res, next) => {
-    const result = validId(req.params.id) ? User.findById(req.params.id) : User.findBySlug(req.params.id);
-
-    result.then(data => res.json(data))
-        .catch(next);
-});
-
-app.get('/username/:userName', (req, res, next) => {
-    const result = User.findOne({userName: req.params.userName});
+    const result = User.findById(req.params.id);
 
     result.then(data => res.json(data))
         .catch(next);

@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const SlugPlugin = require('../helpers/slug');
 const Bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
@@ -12,8 +11,6 @@ const userSchema = new mongoose.Schema({
     password: {type: String, required: true},
     role: {type: String, default: 'user', enum: {values: ['user', 'admin']}},
 }, { versionKey: false });
-
-userSchema.plugin(SlugPlugin('userName'));
 
 userSchema.query.byPage = require('../helpers/paginationQuery');
 

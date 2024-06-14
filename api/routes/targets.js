@@ -22,7 +22,7 @@ router.get('/:id', (req, res, next) => {
         .catch(next);
 });
 
-router.get('/:id/attempts', async (req, res, next) => {
+router.get('/attempts/:id', async (req, res, next) => {
     try {
         const {data} = await axios.get(`${process.env.TARGET_SERVICE_URL}/targets/${req.params.id}`);
 
@@ -48,7 +48,7 @@ router.post('/', adminRole, (req, res, next) => {
         .catch(next);
 });
 
-router.post('/:id/attempts', adminRole, async (req, res, next) => {
+router.post('/attempts/:id', adminRole, async (req, res, next) => {
     try {
         const {data} = await axios.get(`${process.env.TARGET_SERVICE_URL}/targets/${req.params.id}`);
 

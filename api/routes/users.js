@@ -21,9 +21,25 @@ router.get('/:id', (req, res, next) => {
         .catch(next);
 });
 
-//TARGETS TO BE IMPLEMENTED
+router.get('/targets/:id', async (req, res, next) => {
+    try {
+        const {data} = await axios.get(`${process.env.USER_SERVICE_URL}/users/${req.params.id}`);
 
-router.get('/:id/attempts', async (req, res, next) => {
+        axios.get(`${process.env.TARGET_SERVICE_URL}/targets`, {
+            params: {
+                userId: data._id,
+                page: req.query.page,
+                perPage: req.query.perPage,
+            },
+        })
+            .then(response => res.json(paginate(response.data, req)))
+            .catch(next);
+    } catch (error) {
+        next(createError('User not found', 404));
+    }
+});
+
+router.get('/attempts/:id', async (req, res, next) => {
     try {
         const {data} = await axios.get(`${process.env.USER_SERVICE_URL}/users/${req.params.id}`);
 
