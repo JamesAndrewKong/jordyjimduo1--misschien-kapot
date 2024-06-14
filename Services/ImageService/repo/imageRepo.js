@@ -68,7 +68,7 @@ class ImageRepo {
 
             axios.get(url, {
                 headers: {
-                    Authorization: 'Basic ' + btoa(process.env.IMAGE_EXT_API_KEY + ':' + process.env.IMAGE_EXT_API_SECRET),
+                    Authorization: 'Basic ' + btoa(process.env.IMAGGA_EXT_API_KEY + ':' + process.env.IMAGGA_EXT_API_SECRET),
                 },
                 params: params,
             }).then(response => {
