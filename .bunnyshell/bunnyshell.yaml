@@ -39,7 +39,7 @@ components:
                 context: ./Services/Grafana
                 dockerfile: Dockerfile
             ports:
-                - '${GRAFANA_PORT:-5000}:3000'
+                - '5000:3000'
             restart: unless-stopped
     -
         kind: Service
@@ -66,8 +66,8 @@ components:
         dockerCompose:
             image: 'mailhog/mailhog:latest'
             ports:
-                - '${HTTP_MAILHOG_PORT:-8004}:8025'
-                - '${SMTP_MAILHOG_PORT:-1025}:1025'
+                - '8004:8025'
+                - '1025:1025'
             restart: unless-stopped
     -
         kind: Service
@@ -75,7 +75,7 @@ components:
         dockerCompose:
             image: 'rabbitmq:latest'
             ports:
-                - '${BROKER_HTTP_PORT:-15672}:15672'
+                - '15672:15672'
             restart: unless-stopped
     -
         kind: Database
@@ -103,7 +103,7 @@ components:
                 USER_SERVICE_URL: 'http://service-user:3000'
             image: 'node:20.11.1'
             ports:
-                - '${APP_PORT:-8000}:3000'
+                - '8000:3000'
             working_dir: /var/www/html
     -
         kind: Database
@@ -130,7 +130,7 @@ components:
                 - '--config.file=/etc/prometheus/config.yml'
             image: 'prom/prometheus:latest'
             ports:
-                - '${PROM_PORT:-9090}:9090'
+                - '9090:9090'
             restart: unless-stopped
     -
         kind: Service
