@@ -4,3 +4,17 @@ groups:
       - alert: 'On api down'
         expr: up{job='myapi'} < 1
         for: 30s
+  - name: ServiceAlerts
+    rules:
+      - alert: 'On attempt service down'
+        expr: up{job='attempt-service'} < 1
+        for: 30s
+      - alert: 'On user service down'
+        expr: up{job='user-service'} < 1
+        for: 30s
+      - alert: 'On target service down'
+        expr: up{job='target-service'} < 1
+        for: 30s
+      - alert: 'On image service down'
+        expr: up{job='image-service'} < 1
+        for: 30s
