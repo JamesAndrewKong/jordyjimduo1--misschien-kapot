@@ -5,14 +5,6 @@ urlHandle: vwwyup
 components:
     -
         kind: Service
-        name: alert-manager
-        dockerCompose:
-            command:
-                - '--config.file=/etc/prometheus/alertmanager.yml'
-            image: quay.io/prometheus/alertmanager
-            restart: unless-stopped
-    -
-        kind: Service
         name: attempt-service
         dockerCompose:
             command:
@@ -28,19 +20,6 @@ components:
             image: 'node:20.11.1'
             restart: unless-stopped
             working_dir: /var/www/html
-    -
-        kind: Application
-        name: grafana
-        gitRepo: 'https://github.com/JamesAndrewKong/jordyjimduo1.git'
-        gitBranch: main
-        gitApplicationPath: Services/Grafana
-        dockerCompose:
-            build:
-                context: ./Services/Grafana
-                dockerfile: Dockerfile
-            ports:
-                - '5000:3000'
-            restart: unless-stopped
     -
         kind: Service
         name: image-service
@@ -132,19 +111,6 @@ components:
             ports:
                 - '9090:9090'
             restart: unless-stopped
-    -
-        kind: Service
-        name: report-service
-        dockerCompose:
-            command:
-                - bash
-                - '-c'
-                - 'npm install && npm run watch'
-            environment:
-                BROKER_URL: 'amqp://messagebus:5672'
-            image: 'node:20.11.1'
-            restart: unless-stopped
-            working_dir: /var/www/html
     -
         kind: Service
         name: target-service
