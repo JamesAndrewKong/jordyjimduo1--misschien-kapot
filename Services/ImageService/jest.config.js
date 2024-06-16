@@ -3,11 +3,6 @@ module.exports = {
         'ts-jest': {
             tsconfig: './tsconfig.json',
         },
-        "jest": {
-            "transformIgnorePatterns": [
-                "/node_modules/(?!axios)"
-            ]
-        }
     },
     setupFilesAfterEnv: [
         './tests/config/setup.js',
@@ -16,4 +11,7 @@ module.exports = {
     coveragePathIgnorePatterns: [
         '/node_modules/',
     ],
+    transformIgnorePatterns: [
+        "/node_modules/(?!axios)"
+    ]
 };
