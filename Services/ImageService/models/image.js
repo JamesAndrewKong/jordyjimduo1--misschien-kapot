@@ -10,7 +10,7 @@ const imageSchema = new Mongoose.Schema({
 imageSchema.query.byPage = require('../helpers/paginationQuery');
 
 imageSchema.path('content').validate((val) => {
-    urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/;
+    let urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/;
     return urlRegex.test(val);
 }, 'Invalid URL.');
 

@@ -30,7 +30,7 @@ describe('Get Targets', () => {
 
     it('should get all targets by userId', async () => {
         const target = await new Target({location: "Amsterdam", userId: 'userId1'}).save();
-        await new Target({location: {lat: 42.546778, lon: 12.124589}, userId: 'userId2'}).save();
+        await new Target({location: "Amsterdam", userId: 'userId2'}).save();
 
         const res = await agent.get('/targets?userId=userId1');
 
