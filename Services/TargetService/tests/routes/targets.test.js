@@ -12,7 +12,7 @@ describe('Get Targets', () => {
     afterAll(async () => await db.close());
 
     it('should get all targets', async () => {
-        const target = await new Target({location: "Amsterdam", userId: '123456789'}).save();
+        const target = await new Target({location: 'Amsterdam', userId: '123456789'}).save();
 
         const res = await agent.get('/targets');
 
@@ -29,8 +29,8 @@ describe('Get Targets', () => {
     });
 
     it('should get all targets by userId', async () => {
-        const target = await new Target({location: "Amsterdam", userId: 'userId1'}).save();
-        await new Target({location: "Amsterdam", userId: 'userId2'}).save();
+        const target = await new Target({location: 'Amsterdam', userId: 'userId1'}).save();
+        await new Target({location: 'Amsterdam', userId: 'userId2'}).save();
 
         const res = await agent.get('/targets?userId=userId1');
 
@@ -47,7 +47,7 @@ describe('Get Targets', () => {
     });
 
     it('should get a target by id', async () => {
-        const target = await new Target({location: "Amsterdam", userId: 'userId'}).save();
+        const target = await new Target({location: 'Amsterdam', userId: 'userId'}).save();
 
         const res = await agent.get(`/targets/${target._id}`);
 

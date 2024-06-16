@@ -12,6 +12,6 @@ module.exports = {
         '/node_modules/',
     ],
     transformIgnorePatterns: [
-        "/node_modules/(?!axios)"
-    ]
+        '/node_modules/(?!axios)',
+    ],
 };
