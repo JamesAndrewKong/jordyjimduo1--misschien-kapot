@@ -1,0 +1,43 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: AttemptService Tests and Coverage
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
+jobs:
+  test_and_coverage:
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./Services/AttemptService
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ${{env.working-directory}}
+
+      - name: Run Tests
+        run: npm test
+        working-directory: ${{env.working-directory}}
+
+      - name: Run ESLint
+        run: npm run lint
+        working-directory: ${{env.working-directory}}
+
+      - name: Jest coverage report
+        uses: ArtiomTr/jest-coverage-report-action@v2.3.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: ${{env.working-directory}}
