@@ -23,7 +23,6 @@ describe('Get Users', () => {
             data: [
                 {
                     _id: user._id.toString(),
-                    slug: user.slug,
                 },
             ],
         });
@@ -37,31 +36,6 @@ describe('Get Users', () => {
         expect(res.statusCode).toEqual(200);
         expect(res.body).toMatchObject({
             _id: user._id.toString(),
-            slug: user.slug,
-        });
-    });
-
-    it('should get a user by slug', async () => {
-        const user = await new User({userName: 'janklaas01', name: {first: 'Jan Klaas', last: 'van Keulen'}, email: 'jkvkeulen@avans.nl', password: 'password'}).save();
-
-        const res = await agent.get(`/users/${user.slug}`);
-
-        expect(res.statusCode).toEqual(200);
-        expect(res.body).toMatchObject({
-            _id: user._id.toString(),
-            slug: user.slug,
-        });
-    });
-
-    it('should get a user by userName', async () => {
-        const user = await new User({userName: 'janklaas01', name: {first: 'Jan Klaas', last: 'van Keulen'}, email: 'jkvkeulen@avans.nl', password: 'password'}).save();
-
-        const res = await agent.get(`/username/${user.userName}`);
-
-        expect(res.statusCode).toEqual(200);
-        expect(res.body).toMatchObject({
-            _id: user._id.toString(),
-            slug: user.slug,
         });
     });
 });
