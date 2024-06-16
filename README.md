@@ -6,5 +6,11 @@
 
 [![Bunnyshell - Deploy Preview Environment](https://github.com/JamesAndrewKong/jordyjimduo1/actions/workflows/bunnyshell_deploy-preview-env.yaml/badge.svg?branch=main)](https://github.com/JamesAndrewKong/jordyjimduo1/actions/workflows/bunnyshell_deploy-preview-env.yaml)
 
-COMMAND TO RUN FOR DOCKER COMPOSE [NEW]
+
+COMMAND TO RUN FOR DOCKER COMPOSE [NEW] (move env to root)
+docker-compose up
+
+
+
+COMMAND TO RUN FOR DOCKER COMPOSE [OLD]
 docker-compose --env-file ./api/.env up

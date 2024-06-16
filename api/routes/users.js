@@ -1,35 +1,68 @@
-var express = require('express');
+const express = require('express');
+const router = express.Router();
+const axios = require('axios');
+const paginate = require('../helpers/paginatedResponse');
+const createError = require('http-errors');
 
-var router = express.Router();
-
- 
-
-const { db } = require("../services/database");
-
- 
-
-/* GET users listing. */
-
-router.get('/', async function(req, res) {
-
-  let users = await db.collection('users').find().toArray();
-
-  res.json(users);
-
+router.get('/', async (req, res, next) => {
+    axios.get(`${process.env.USER_SERVICE_URL}/users`, {
+        params: {
+            page: req.query.page,
+            perPage: req.query.perPage,
+        },
+    })
+        .then(response => res.json(paginate(response.data, req)))
+        .catch(next);
 });
 
- 
+router.get('/:id', (req, res, next) => {
+    axios.get(`${process.env.USER_SERVICE_URL}/users/${req.params.id}`)
+        .then(response => res.json(response.data))
+        .catch(next);
+});
 
-router.post('/', function(req, res){
+router.get('/targets/:id', async (req, res, next) => {
+    try {
+        const {data} = await axios.get(`${process.env.USER_SERVICE_URL}/users/${req.params.id}`);
 
-  db.collection('users').insertOne(req.body)
+        axios.get(`${process.env.TARGET_SERVICE_URL}/targets`, {
+            params: {
+                userId: data._id,
+                page: req.query.page,
+                perPage: req.query.perPage,
+            },
+        })
+            .then(response => res.json(paginate(response.data, req)))
+            .catch(next);
+    } catch (error) {
+        next(createError('User not found', 404));
+    }
+});
 
-    .then((user) => res.status(201).json({ "id": user.insertedId }))
+router.get('/attempts/:id', async (req, res, next) => {
+    try {
+        const {data} = await axios.get(`${process.env.USER_SERVICE_URL}/users/${req.params.id}`);
 
-    .catch(err => res.status(500).json(err));
+        axios.get(`${process.env.ATTEMPT_SERVICE_URL}/attempts?userId=${data._id}`, {
+            params: {
+                page: req.query.page,
+                perPage: req.query.perPage,
+            },
+        })
+            .then(response => res.json(paginate(response.data, req)))
+            .catch(next);
+    } catch (error) {
+        next(createError('User not found', 404));
+    }
+});
 
-})
-
- 
+router.post('/', async (req, res, next) => {
+    axios.post(`${process.env.USER_SERVICE_URL}/users`, req.body)
+        .then(response => {
+            res.status(201);
+            res.json(response.data);
+        })
+        .catch(() => next(createError(422, 'Could not create user')));
+});
 
 module.exports = router;

@@ -1,0 +1,20 @@
+{
+    "name": "reportservice",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "start": "node index.js",
+        "watch": "nodemon index.js",
+        "test": "export NODE_ENV=test && jest",
+        "lint": "eslint ."
+    },
+    "dependencies": {
+        "amqplib": "^0.10.4",
+        "dotenv": "^16.0.0"
+    },
+    "devDependencies": {
+        "eslint": "^8.57.0",
+        "jest": "^27.4.7",
+        "nodemon": "^2.0.15"
+    }
+}
