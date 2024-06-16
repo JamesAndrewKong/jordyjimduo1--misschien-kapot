@@ -1,1 +1,1 @@
-[![UserService Tests and Coverage](https://github.com/avans-devops/avans-devops-2324-jordyjim/actions/workflows/user-service.yml/badge.svg)](https://github.com/avans-devops/avans-devops-2324-jordyjim/actions/workflows/user-service.yml)
+[![UserService Tests and Coverage](https://github.com/JamesAndrewKong/jordyjimduo1/actions/workflows/user-service.yml/badge.svg)](https://github.com/JamesAndrewKong/jordyjimduo1/actions/workflows/user-service.yml)

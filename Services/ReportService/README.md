@@ -1,1 +1,1 @@
-[![ReportService Tests and Coverage](https://github.com/avans-devops/avans-devops-2324-jordyjim/actions/workflows/report-service.yml/badge.svg)](https://github.com/avans-devops/avans-devops-2324-jordyjim/actions/workflows/report-service.yml)
+[![ReportService Tests and Coverage](https://github.com/JamesAndrewKong/jordyjimduo1/actions/workflows/report-service.yml/badge.svg)](https://github.com/JamesAndrewKong/jordyjimduo1/actions/workflows/report-service.yml)
